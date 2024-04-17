@@ -1,0 +1,12 @@
+ISE:
+  # ERS and MnT login creds
+  node: https://ISE_ADDRESS
+  username: USERNAME
+  password: PASSWORD
+
+TENABLE:
+  # security center API creds
+  node: https://SC_CENTER_ADDRESS
+  accesskey: accesskey 
+  secretkey: secretkey
+  query_id: 1234
