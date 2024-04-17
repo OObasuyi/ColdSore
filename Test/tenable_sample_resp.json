@@ -1,0 +1,47 @@
+{
+    "type": "regular",
+    "response": {
+        "totalRecords": "1",
+        "returnedRecords": 1,
+        "startOffset": "-1",
+        "endOffset": "-1",
+        "matchingDataElementCount": "43:0:0:4:1:38:13",
+        "results": [
+            {
+                "ip": "192.168.220.1",
+                "uuid": "",
+                "score": "13",
+                "total": "43",
+                "severityInfo": "38",
+                "severityLow": "1",
+                "severityMedium": "4",
+                "severityHigh": "0",
+                "severityCritical": "0",
+                "macAddress": "",
+                "policyName": "cd954810-e3ad-571d-bf54-285e442743b0-18637/ISE_SCAN_POLICY",
+                "pluginSet": "202009290949",
+                "netbiosName": "",
+                "dnsName": "",
+                "osCPE": "cpe:/o:cisco:ios_xe",
+                "biosGUID": "",
+                "tpmID": "",
+                "mcafeeGUID": "",
+                "lastAuthRun": "",
+                "lastUnauthRun": "1609338612",
+                "hostUniqueness": "repositoryID,ip,dnsName",
+                "uniqueness": "repositoryID,ip,dnsName",
+                "repository": {
+                    "id": "1",
+                    "name": "Default",
+                    "description": "",
+                    "sciID": "1",
+                    "dataFormat": "IPv4"
+                }
+            }
+        ]
+    },
+    "error_code": 0,
+    "error_msg": "",
+    "warnings": [],
+    "timestamp": 1616005963
+}
