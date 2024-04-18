@@ -45,6 +45,25 @@ class ColdSore:
         return sc_pd
 
 #TODO: need to make ISE customattr for last time scanned and severity
+    def pull_ise_info(self):
+        ise_info = self.config['ISE']
+        ise_session = Session()
+        ise_session.verify = self.ssl_verify
+        ise_session.headers = {"Accept": "application/xml", "Content-Type": "application/xml"}
+        ise_session.auth = (ise_info['username'], ise_info['password'])
+        mnt_data_url = f'{ise_info["node"]}/admin/API/mnt/Session/ActiveList'
+        ise_data = pd.DataFrame([]) # holder
+
+        data_req = ise_session.get(mnt_data_url)
+        if data_req.status_code != 200:
+            self.logger.critical(f'ise: could not reach node at {mnt_data_url}')
+            self.logger.critical(f'ise: code recvd from node {data_req.status_code} \n\n CONTENT:\n\n\ {data_req.content}\n\n')
+            self.logger.critical(f'ise: QUITTING PROGRAM!!!!!!')
+            quit()
+        else:
+            ise_data = pd.read_xml(data_req.content,parser='etree')
+        
+        return ise_data
 
     
 
