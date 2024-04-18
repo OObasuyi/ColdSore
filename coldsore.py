@@ -63,11 +63,28 @@ class ColdSore:
         else:
             ise_data = pd.read_xml(data_req.content,parser='etree')
         
+        ise_data.rename(columns={"calling_station_id":"macAddress"},inplace=True)
         return ise_data
 
-    
+    @staticmethod
+    def combine_ise_tenable(ise_pd,sc_pd):
+        combined_df = pd.concat([ise_pd, sc_pd], axis=0).drop_duplicates(subset=['macAddress'])
+        return combined_df
+
+    def push_to_ise(self):
+
+        ten_pd= self.pull_tenable_info()
+        ise_pd= self.pull_ise_info()
+        combined_data = self.combine_ise_tenable(ise_pd,ten_pd)
+        # drop spots with no mac since thats a key feature for ISE
+        combined_data.dropna(subset=['acrScore','server'],inplace=True)
+        #TODO: not finding anything in common??????
+        pass
+
+
+
 
 
 if __name__ == "__main__":
     coldS = ColdSore('config_test.yaml')
-    coldS.pull_tenable_info()
+    coldS.push_to_ise()
