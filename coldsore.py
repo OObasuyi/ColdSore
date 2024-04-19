@@ -5,7 +5,7 @@ import pandas as pd
 
 
 
-class ColdSore:
+class Sore:
     UTILS = Rutils()
 
     def __init__(self, config: str = "config.yaml", verify_ssl=False):
@@ -41,7 +41,8 @@ class ColdSore:
             sc_dat = loads(data_req.content).get("response").get('results')
         
         sc_pd = pd.DataFrame(sc_dat)
-        # normalize and remove unneeded.
+        # normalize
+        sc_pd = sc_pd.applymap(lambda x: x.lower() if isinstance(x,str) else x)
         return sc_pd
 
 #TODO: need to make ISE customattr for last time scanned and severity
@@ -63,22 +64,18 @@ class ColdSore:
         else:
             ise_data = pd.read_xml(data_req.content,parser='etree')
         
-        ise_data.rename(columns={"calling_station_id":"macAddress"},inplace=True)
+        # normalize
+        ise_data = ise_data.applymap(lambda x: x.lower() if isinstance(x,str) else x)
         return ise_data
 
-    @staticmethod
-    def combine_ise_tenable(ise_pd,sc_pd):
-        combined_df = pd.concat([ise_pd, sc_pd], axis=0).drop_duplicates(subset=['macAddress'])
-        return combined_df
 
     def push_to_ise(self):
-
         ten_pd= self.pull_tenable_info()
         ise_pd= self.pull_ise_info()
-        combined_data = self.combine_ise_tenable(ise_pd,ten_pd)
-        # drop spots with no mac since thats a key feature for ISE
-        combined_data.dropna(subset=['acrScore','server'],inplace=True)
-        #TODO: not finding anything in common??????
+        # just take the mac from ISE data and see if its in the ten df
+        mac_list = ise_pd['calling_station_id'].tolist()
+        ten_pd['in_ise'] = ten_pd['macAddress'].apply(lambda x: True if x in mac_list else False)
+
         pass
 
 
@@ -86,5 +83,5 @@ class ColdSore:
 
 
 if __name__ == "__main__":
-    coldS = ColdSore('config_test.yaml')
+    coldS = Sore('config_test.yaml')
     coldS.push_to_ise()
