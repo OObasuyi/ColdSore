@@ -6,6 +6,7 @@ import pandas as pd
 
 requests.packages.urllib3.disable_warnings()
 
+
 class Sore:
     UTILS = Rutils()
 
@@ -125,7 +126,7 @@ class Sore:
             'Tenable Score': str(row['tenable_score']),
             'last Auth Run': row['lastAuthRunDate'],
             'last non-Auth Run': row['lastUnauthRunDate']
-        },axis=1)
+        }, axis=1)
         endpoints_dat['name'] = endpoints_dat['mac']
         endpoints_dat_json = endpoints_dat.to_json(orient='records', force_ascii=False)
         return endpoints_dat_json
