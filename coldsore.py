@@ -1,8 +1,10 @@
+from json import loads, dumps
+
+import pandas as pd
 import requests
 from requests import Session
-from json import loads, dumps
+
 from utils import log_collector, Rutils
-import pandas as pd
 
 requests.packages.urllib3.disable_warnings()
 
