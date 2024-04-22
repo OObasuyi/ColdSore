@@ -1,12 +1,12 @@
+import logging
 from base64 import b64encode
 from gzip import open as gzopen
-from logging.handlers import TimedRotatingFileHandler
-from os import path, makedirs, rename, remove, replace,walk,pardir
-from urllib.parse import quote as url_quote
 from io import StringIO
-import yaml
+from logging.handlers import TimedRotatingFileHandler
+from os import path, makedirs, rename, remove, replace, walk
+from urllib.parse import quote as url_quote
 
-import logging
+import yaml
 
 
 class Rutils:
