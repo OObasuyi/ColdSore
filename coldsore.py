@@ -107,7 +107,7 @@ class Sore:
             ten_pd = input_generator(amount=test_data, seed=kwargs.get('test_seed'))
 
         # since we only care what the overall score and every severity is important besides info we will sum those vals.
-        ten_pd['tenable_score'] = ten_pd[['severityLow', 'severityMedium', 'severityHigh', 'severityCritical']].sum(axis=1)
+        ten_pd['tenable_score'] = ten_pd[['severityLow', 'severityMedium', 'severityHigh', 'severityCritical']].sum(axis=1).astype(int)
         ten_pd.drop(columns=['severityLow', 'severityMedium', 'severityHigh', 'severityCritical'], inplace=True)
 
         self.logger.info(f'ISE: attempting to update {len(ten_pd)} endpoints in ISE')
