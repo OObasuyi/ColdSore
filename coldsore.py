@@ -134,7 +134,7 @@ class Sore:
         # drop unneeded
         bad_cols = list(weight_system.keys())
         bad_cols.append('weighted_severity')
-        ten_pd.drop(columns=['severityLow', 'severityMedium', 'severityHigh', 'severityCritical'], inplace=True)
+        ten_pd.drop(columns=bad_cols, inplace=True)
         return ten_pd
 
 
