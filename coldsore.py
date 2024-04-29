@@ -73,8 +73,6 @@ class Sore:
 
     def pull_ise_info(self, ise_session):
         mnt_data_url = f'{self.ise_info["node"]}/admin/API/mnt/Session/ActiveList'
-        ise_data = pd.DataFrame([])  # holder
-
         data_req = ise_session.get(mnt_data_url)
         if data_req.status_code != 200:
             self.logger.critical(f'ise: could not reach node at {mnt_data_url}')
@@ -106,10 +104,7 @@ class Sore:
             from Test.tempcheck import input_generator
             ten_pd = input_generator(amount=test_data, seed=kwargs.get('test_seed'))
 
-        # since we only care what the overall score and every severity is important besides info we will sum those vals.
-        ten_pd['tenable_score'] = ten_pd[['severityLow', 'severityMedium', 'severityHigh', 'severityCritical']].sum(axis=1)
-        ten_pd.drop(columns=['severityLow', 'severityMedium', 'severityHigh', 'severityCritical'], inplace=True)
-
+        ten_pd = self.prepare_tens_data(ten_pd)
         self.logger.info(f'ISE: attempting to update {len(ten_pd)} endpoints in ISE')
         # create Templates based on new endpoints
         new_endpoints = self._ise_endpoint_template(ten_pd)
@@ -121,6 +116,24 @@ class Sore:
         self.logger.info(f'ISE: received status code {update_meth.status_code} for trying to update {len(ten_pd)} endpoints in ISE')
         if update_meth.status_code == 200:
             self.logger.debug(f'ISE: received back ID: {loads(update_meth.content)["id"]} from ISE')
+
+    @staticmethod
+    def prepare_tens_data(ten_pd):
+        # get weighted since critical is worse and normalize
+        weight_system = {'severityLow': 1, 'severityMedium': 2, 'severityHigh': 3, 'severityCritical': 4}
+        ten_pd[list(weight_system.keys())] = ten_pd[list(weight_system.keys())].astype(int)
+        ten_pd['weighted_severity'] = ten_pd.apply(lambda row: sum(row[col] * weight_system[col] for col in weight_system), axis=1)
+        # make relative scoring
+        min_sev = ten_pd['weighted_severity'].min()
+        max_sev = ten_pd['weighted_severity'].max()
+        ten_pd['tenable_score'] = 100 * (ten_pd['weighted_severity'] - min_sev) / (max_sev - min_sev)
+        ten_pd['tenable_score'] = ten_pd['tenable_score'].round(0).astype(int)
+        ten_pd.sort_values(by=['tenable_score'], inplace=True)
+        # drop unneeded
+        bad_cols = list(weight_system.keys())
+        bad_cols.append('weighted_severity')
+        ten_pd.drop(columns=bad_cols, inplace=True)
+        return ten_pd
 
     @staticmethod
     def _ise_endpoint_template(endpoints_dat: pd.DataFrame):
